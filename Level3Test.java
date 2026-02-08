@@ -38,7 +38,7 @@ public class Level3Test {
             newPatient.addAppointment(newAppt);
             office.addPatient(newPatient);
             
-            if (office.getPhysiciansSize() != 2 || office.getPatientsSize() != 2) {
+            if (office.getPhysicianSize() != 2 || office.getPatientSize() != 2) {
                 throw new Exception("Adding new objects to MedicalOffice failed.");
             }
             System.out.println("In-Memory Modification: PASS");
@@ -71,3 +71,4 @@ public class Level3Test {
         }
     }
 }
+
