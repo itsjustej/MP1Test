@@ -1,54 +1,60 @@
 import java.io.*;
-import java.util.ArrayList;
 
 public class Level4Test {
     public static void main(String[] args) {
         try {
-            System.out.println("Starting Level 4: Selection Sort Validation...");
+            System.out.println("Starting Level 4: Explicit Sort and String Validation...");
 
-            MedicalOffice office = new MedicalOffice("Sorting Test Clinic");
+            // 1. Setup MedicalOffice
+            MedicalOffice office = new MedicalOffice("Selection Sort Clinic");
 
-            // 1. Add Physicians in unsorted order
+            // 2. Add Physicians in random alphabetical order
+            // Testing: Alphabetical and Tie-breaker (Apple, Aaron vs Apple, Adam)
             office.addPhysician("Zebra, Zane");
             office.addPhysician("Apple, Adam");
-            office.addPhysician("Apple, Aaron"); // Tie-breaker test
+            office.addPhysician("Apple, Aaron");
 
-            // 2. Add Patients with last name ties
-            // Requirement: Sort by lastname, then firstname
-            Patient p1 = new Patient(1, "Charlie", "Brown", 'M', "DOB", "Doc");
-            Patient p2 = new Patient(2, "Alice", "Brown", 'F', "DOB", "Doc"); // Should come before Charlie
-            Patient p3 = new Patient(3, "Xavier", "Adams", 'M', "DOB", "Doc"); // Should come first
+            // 3. Add Patients with shared last names
+            // Testing: Primary (LastName) and Secondary (FirstName) sort
+            office.addPatient(new Patient(10, "Charlie", "Brown", 'M', "01/01/1980", "Doc A"));
+            office.addPatient(new Patient(5, "Alice", "Brown", 'F', "01/01/1985", "Doc B"));
+            office.addPatient(new Patient(1, "Xavier", "Adams", 'M', "01/01/1990", "Doc C"));
 
-            office.addPatient(p1);
-            office.addPatient(p2);
-            office.addPatient(p3);
+            // 4. PERFORM THE ACTION (Separate from toString)
+            // This method should call your private sortPhysicians() and sortPatients()
+            office.sortData(); 
+            System.out.println("Sort command executed.");
 
-            // 3. Trigger Sorts 
-            // Note: Since the methods are private, we assume they are called 
-            // within the save or toString logic as per typical assignment flow.
-            String sortedOutput = office.toString();
+            // 5. OBSERVE THE RESULTS
+            String result = office.toString();
 
-            // 4. Verify Physician Sort (Aaron -> Adam -> Zane)
-            int indexAaron = sortedOutput.indexOf("Apple, Aaron");
-            int indexAdam = sortedOutput.indexOf("Apple, Adam");
-            int indexZane = sortedOutput.indexOf("Zebra, Zane");
+            // Verification: Physicians (Should be Aaron -> Adam -> Zane)
+            int posAaron = result.indexOf("Apple, Aaron");
+            int posAdam = result.indexOf("Apple, Adam");
+            int posZane = result.indexOf("Zebra, Zane");
 
-            if (indexAaron > indexAdam || indexAdam > indexZane) {
-                throw new Exception("Physician Selection Sort failed. Check tie-breaker logic.");
+            if (posAaron == -1 || posAdam == -1 || posZane == -1) {
+                throw new Exception("Physician names missing or formatted incorrectly in toString.");
             }
-            System.out.println("Physician Sorting: PASS");
-
-            // 5. Verify Patient Sort (Adams, Xavier -> Brown, Alice -> Brown, Charlie)
-            int indexAdamsX = sortedOutput.indexOf("Adams");
-            int indexBrownA = sortedOutput.indexOf("Alice");
-            int indexBrownC = sortedOutput.indexOf("Charlie");
-
-            if (indexAdamsX > indexBrownA || indexBrownA > indexBrownC) {
-                throw new Exception("Patient Selection Sort failed. Expected Adams -> Brown (Alice) -> Brown (Charlie).");
+            if (!(posAaron < posAdam && posAdam < posZane)) {
+                throw new Exception("Physician Selection Sort failed. Order is incorrect.");
             }
-            System.out.println("Patient Sorting: PASS");
+            System.out.println("Physician Selection Sort: PASS");
 
-            System.out.println("LEVEL 4 COMPLETE: 25/25 (Total 100%)");
+            // Verification: Patients (Should be Adams -> Brown, Alice -> Brown, Charlie)
+            int posAdams = result.indexOf("Adams");
+            int posAlice = result.indexOf("Alice");
+            int posCharlie = result.indexOf("Charlie");
+
+            if (posAdams == -1 || posAlice == -1 || posCharlie == -1) {
+                throw new Exception("Patient names missing or formatted incorrectly in toString.");
+            }
+            if (!(posAdams < posAlice && posAlice < posCharlie)) {
+                throw new Exception("Patient Selection Sort failed. Expected Adams -> Brown(Alice) -> Brown(Charlie).");
+            }
+            System.out.println("Patient Selection Sort: PASS");
+
+            System.out.println("LEVEL 4 COMPLETE: 25/25 (Final Level)");
 
         } catch (Exception e) {
             System.err.println("LEVEL 4 FAILED: " + e.getMessage());
